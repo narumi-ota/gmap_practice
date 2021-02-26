@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>Google map 練習</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="target"></div>
+<input type="text" id="address">
+<button id="search">検索</button>
+
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?language=ja&
+    reagion=JP&key=AIzaSyA_80g3G8chEycvaMQAJfPYk9ZC6X0t8qo&callback=initMap">
+</script>
+
+<script>
+    function initMap(){
+        'use strict';
+
+        var target = document.getElementById('target');
+
+        var map;
+        var tokyo = {lat: 35.681167, lng: 139.767052};
+        var marker;
+    
+        map = new google.maps.Map(target,{
+            center: tokyo,
+            zoom: 18,
+            disableDefaultUI: true,
+        });
+
+        map.addListener('click', function(e){
+            var marker = new google.maps.Marker({
+                position: e.latLng,
+                map: map,
+                title: e.latLng.toString(),
+                animation: google.maps.Animation
+            })
+            marker.addListener('click',function(){
+                this.setMap(null);
+            });
+        });
+
+        
+        var geocoder = new google.maps.Geocoder();
+
+        document.getElementById('search').addEventListener('click', function(){
+           geocoder.geocode({ 
+               address: document.getElementById('address').value
+           },function(results,status){
+               if(status !== 'OK'){
+                   alert('Failed' + status);
+                   return;
+               }
+               if (results[0]){
+                new google.maps.Map(target,{
+                   center: results[0].geometry.location,
+                   zoom: 15,
+                });
+               }else {
+                   alert('住所から場所を特定できませんでした。最初にビル名などを省略し、番地までの検索などでお試しください。');
+                   return;
+               }
+           });
+        });
+
+        
+        
+        
+    }
+</script>
+
+</body>
+</html>
